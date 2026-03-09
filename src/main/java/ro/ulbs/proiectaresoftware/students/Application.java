@@ -2,7 +2,6 @@ package ro.ulbs.proiectaresoftware.students;
 
 public class Application {
 
-    // Am adaugat String[] args pentru ca metoda sa poata rula
     public static void main(String[] args) {
         Student s1 = new Student(112, "Ioan", "Popa", "TI21/1");
         Student s2 = new Student(112, "Maria", "Oprea", "TI21/1");
