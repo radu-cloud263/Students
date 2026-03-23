@@ -27,7 +27,6 @@ public class Student {
 
     @Override
     public String toString() {
-        // Folosim String.format pentru a alinia textul pe coloane
         return String.format("%10d %14s %11s %15s", numarMatricol, Prenume, Nume, formatieDeStudiu);
     }
 
