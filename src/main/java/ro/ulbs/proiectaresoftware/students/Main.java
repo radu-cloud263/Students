@@ -54,7 +54,7 @@ public class Main {
             }
 
             writer.close();
-            System.out.println("\nStudentii au fost sortati si salvati in 'studenti_out.txt'");
+            System.out.println("\nStudentii au fost sortati si salvati iSn 'studenti_out.txt'");
         } catch (FileNotFoundException e) {
             System.err.println("Eroare: Nu s-a putut accesa fisierul 'studenti_out.txt'");
         }
