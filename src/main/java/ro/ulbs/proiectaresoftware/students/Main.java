@@ -43,20 +43,22 @@ public class Main {
             System.out.println(s.toString());
         }
 
-        listaStudenti.sort(Comparator.comparing(Student::getNume));
+        listaStudenti.sort(
+                Comparator.comparing(Student::getFormatieDeStudiu).thenComparing(Student::getNume)
+        );
 
         try {
-            File fisierOut = new File("studenti_out.txt");
-            PrintWriter writer = new PrintWriter(fisierOut);
+            File fisierOutSorted = new File("studenti_out_sorted.txt");
+            PrintWriter writer = new PrintWriter(fisierOutSorted);
 
             for (Student s : listaStudenti) {
                 writer.println(s.getNumarMatricol() + "," + s.getPrenume() + "," + s.getNume() + "," + s.getFormatieDeStudiu());
             }
 
             writer.close();
-            System.out.println("\nStudentii au fost sortati si salvati iSn 'studenti_out.txt'");
+            System.out.println("\nStudentii au fost sortati si salvati in 'studenti_out_sorted.txt'");
         } catch (FileNotFoundException e) {
-            System.err.println("Eroare: Nu s-a putut accesa fisierul 'studenti_out.txt'");
+            System.err.println("Eroare: Nu s-a putut accesa fisierul 'studenti_out_sorted.txt'");
         }
     }
 
