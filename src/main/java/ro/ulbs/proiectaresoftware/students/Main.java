@@ -1,40 +1,53 @@
 package ro.ulbs.proiectaresoftware.students;
 
-import java.util.*;
-import java.io.File;
-import java.util.ArrayList;
-import java.io.PrintWriter;
-import java.io.FileNotFoundException;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.io.BufferedWriter;
-
+import java.util.LinkedHashSet;
+import java.util.Set;
 
 public class Main {
 
-
-    public static void salveazaInFisier(String numeFisier, Collection<? extends Student> colectieStudenti) {
-        try (BufferedWriter writer = new BufferedWriter(new FileWriter(numeFisier))) {
-            for (Student student : colectieStudenti) {
-                writer.write(student.toString());
-                writer.newLine();
-            }
-            System.out.println("Lista a fost salvata cu succes in: " + numeFisier);
-        } catch (IOException e) {
-            System.err.println("Eroare la scrierea in fisierul " + numeFisier + ": " + e.getMessage());
-        }
+    static Student schimbaFormatia(Student st, String nouaFormatieDeStudiu) {
+        return new Student(st.getNumarMatricol(), st.getPrenume(), st.getNume(), nouaFormatieDeStudiu, st.getNota());
     }
+
+    static Set<Student> imparteInDouaFormatii(Set<Student> studenti, String formatia1, String formatia2) {
+        Set<Student> studentiNoi = new LinkedHashSet<>();
+
+        int total = studenti.size();
+        int jumatate = (total + 1) / 2;
+
+        int index = 0;
+        for (Student st : studenti) {
+            if (index < jumatate) {
+                studentiNoi.add(schimbaFormatia(st, formatia1));
+            } else {
+                studentiNoi.add(schimbaFormatia(st, formatia2));
+            }
+            index++;
+        }
+
+        return studentiNoi;
+    }
+
     public static void main(String[] args) {
 
+        Set<Student> studenti = new LinkedHashSet<>();
 
-        List<StudentBursier> bursieri = new ArrayList<>();
+        studenti.add(new Student(1025, "Andrei", "Popa", "Veche", 8.70));
+        studenti.add(new Student(1024, "Ioan", "Mihalcea", "Veche", 10.0));
+        studenti.add(new Student(1026, "Anamaria", "Prodan", "Veche", 8.90));
+        studenti.add(new Student(1029, "Bianca", "Popescu", "Veche", 10.0));
+        studenti.add(new Student(1030, "Mihai", "Eminescu", "Veche", 9.50));
 
-        bursieri.add(new StudentBursier(1025, "Andrei", "Popa", "ISM141/2", 8.70, 725.50));
-        bursieri.add(new StudentBursier(1024, "Ioan", "Mihalcea", "ISM141/1", 9.80, 801.10));
-        bursieri.add(new StudentBursier(1026, "Anamaria", "Prodan", "TI131/1", 8.90, 745.50));
-        bursieri.add(new StudentBursier(1029, "Bianca", "Popescu", "TI131/1", 9.10, 780.80));
+        System.out.println("--- Lista initiala ---");
+        for(Student st : studenti) {
+            System.out.println(st);
+        }
 
+        Set<Student> studentiImpartiti = imparteInDouaFormatii(studenti, "TI 211 1", "TI 211 2");
 
-        salveazaInFisier("bursieri_out.txt", bursieri);
+        System.out.println("\n--- Lista dupa impartirea in formatii noi ---");
+        for(Student st : studentiImpartiti) {
+            System.out.println(st);
+        }
     }
 }
