@@ -1,6 +1,15 @@
 package ro.ulbs.proiectaresoftware.students;
 
+import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.xssf.usermodel.XSSFSheet;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.LinkedHashSet;
+import java.util.List;
 import java.util.Set;
 
 public class Main {
@@ -11,10 +20,8 @@ public class Main {
 
     static Set<Student> imparteInDouaFormatii(Set<Student> studenti, String formatia1, String formatia2) {
         Set<Student> studentiNoi = new LinkedHashSet<>();
-
         int total = studenti.size();
         int jumatate = (total + 1) / 2;
-
         int index = 0;
         for (Student st : studenti) {
             if (index < jumatate) {
@@ -24,8 +31,68 @@ public class Main {
             }
             index++;
         }
-
         return studentiNoi;
+    }
+
+
+    public static void writeToXls(Set<Student> studenti, String fileName) {
+        try (XSSFWorkbook workbook = new XSSFWorkbook()) {
+            XSSFSheet sheet = workbook.createSheet("Studenti");
+            int rowNum = 0;
+
+            Row headerRow = sheet.createRow(rowNum++);
+            headerRow.createCell(0).setCellValue("Numar Matricol");
+            headerRow.createCell(1).setCellValue("Prenume");
+            headerRow.createCell(2).setCellValue("Nume");
+            headerRow.createCell(3).setCellValue("Formatie");
+            headerRow.createCell(4).setCellValue("Nota");
+
+            for (Student st : studenti) {
+                Row row = sheet.createRow(rowNum++);
+                row.createCell(0).setCellValue(st.getNumarMatricol());
+                row.createCell(1).setCellValue(st.getPrenume());
+                row.createCell(2).setCellValue(st.getNume());
+                row.createCell(3).setCellValue(st.getFormatieDeStudiu());
+                row.createCell(4).setCellValue(st.getNota());
+            }
+
+            try (FileOutputStream out = new FileOutputStream(fileName)) {
+                workbook.write(out);
+                System.out.println("Fisierul a fost creat cu succes: " + fileName);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+
+    public static List<Student> readFromXls(String fileName) {
+        List<Student> students = new ArrayList<>();
+        try (FileInputStream fis = new FileInputStream(fileName);
+             XSSFWorkbook workbook = new XSSFWorkbook(fis)) {
+
+            XSSFSheet sheet = workbook.getSheetAt(0);
+            Iterator<Row> rowIterator = sheet.iterator();
+
+            if (rowIterator.hasNext()) {
+                rowIterator.next();
+            }
+
+            while (rowIterator.hasNext()) {
+                Row row = rowIterator.next();
+
+                int nrMatricol = (int) row.getCell(0).getNumericCellValue();
+                String prenume = row.getCell(1).getStringCellValue();
+                String nume = row.getCell(2).getStringCellValue();
+                String formatie = row.getCell(3).getStringCellValue();
+                double nota = row.getCell(4).getNumericCellValue();
+
+                students.add(new Student(nrMatricol, prenume, nume, formatie, nota));
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return students;
     }
 
     public static void main(String[] args) {
@@ -38,15 +105,17 @@ public class Main {
         studenti.add(new Student(1029, "Bianca", "Popescu", "Veche", 10.0));
         studenti.add(new Student(1030, "Mihai", "Eminescu", "Veche", 9.50));
 
-        System.out.println("--- Lista initiala ---");
-        for(Student st : studenti) {
-            System.out.println(st);
-        }
-
         Set<Student> studentiImpartiti = imparteInDouaFormatii(studenti, "TI 211 1", "TI 211 2");
 
-        System.out.println("\n--- Lista dupa impartirea in formatii noi ---");
-        for(Student st : studentiImpartiti) {
+
+        String xlsFileName = "laborator8_students.xlsx";
+        writeToXls(studentiImpartiti, xlsFileName);
+
+
+        List<Student> studentsFromXls = readFromXls(xlsFileName);
+
+        System.out.println("\nStudenti cititi din excel:");
+        for (Student st : studentsFromXls) {
             System.out.println(st);
         }
     }
