@@ -46,12 +46,15 @@ public class Student {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Student student = (Student) o;
-        return numarMatricol == student.numarMatricol;
+        return Objects.equals(prenume, student.prenume) &&
+                Objects.equals(nume, student.nume) &&
+                Objects.equals(formatieDeStudiu, student.formatieDeStudiu);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(numarMatricol, prenume, nume, formatieDeStudiu, nota);
+
+        return Objects.hash(prenume, nume, formatieDeStudiu);
     }
 
     @Override
