@@ -1,18 +1,19 @@
 package ro.ulbs.proiectaresoftware.students;
 
 import java.util.ArrayList;
-import java.util.HashSet;
+import java.util.HashMap;
 import java.util.List;
-import java.util.Set;
+import java.util.Map;
 
 public class Application {
 
     public static void main(String[] args) {
-        Student s1 = new Student(112, "Ioan", "Popa", "TI21/1");
-        Student s2 = new Student(112, "Maria", "Oprea", "TI21/1");
-        Student s3 = new Student(120, "Alis", "Popa", "TI21/2");
-        Student s4 = new Student(122, "Mihai", "Vecerdea", "TI22/1");
-        Student s5 = new Student(122, "Eugen", "Uritescu", "TI22/2");
+        Student s1 = new Student(112, "Ioan", "Popa", "TI21/1", 9.80);
+        Student s2 = new Student(112, "Maria", "Oprea", "TI21/1", 8.70);
+        Student s3 = new Student(120, "Alis", "Popa", "TI21/2", 8.90);
+        Student s4 = new Student(122, "Mihai", "Vecerdea", "TI22/1", 5.40);
+        Student s5 = new Student(122, "Eugen", "Uritescu", "TI22/2", 6.20);
+        Student s6 = new Student(1029, "Bianca", "Popescu", "TI131/1", 9.10);
 
         List<Student> listaStudenti = new ArrayList<>();
         listaStudenti.add(s1);
@@ -20,34 +21,36 @@ public class Application {
         listaStudenti.add(s3);
         listaStudenti.add(s4);
         listaStudenti.add(s5);
+        listaStudenti.add(s6);
 
-        System.out.println(String.format("%10s %14s %11s %15s %5s", "MATRICOL", "PRENUME", "NUME", "FORMATIE", "NOTA"));
+        Map<Integer, Student> mapStudentiComplet = new HashMap<>();
         for (Student st : listaStudenti) {
-            System.out.println(st);
+            mapStudentiComplet.put(st.getNumarMatricol(), st);
         }
-        System.out.println();
 
-        Student studentCautatB = new Student(120, "Alis", "Popa", "TI21/2");
-        Student studentCautatC = new Student(112, "Maria", "Popa", "TI21/1");
+        System.out.println("Rezultat Căutare Notă în O(1)");
 
-        System.out.println("Prezent studentul B? " + cautaInLista(listaStudenti, studentCautatB));
-        System.out.println("Prezent studentul C? " + cautaInLista(listaStudenti, studentCautatC));
-        System.out.println();
+        double notaM = gasesteNota("Bianca", "Popescu", mapStudentiComplet);
+        double notaN = gasesteNota("Ioan", "Popa", mapStudentiComplet);
 
-        Set<Student> setStudenti = new HashSet<>(listaStudenti);
-
-        System.out.println("Prezent studentul B (O(1))? " + setStudenti.contains(studentCautatB));
-        System.out.println("Prezent studentul C (O(1))? " + setStudenti.contains(studentCautatC));
+        System.out.println("Nota pentru Bianca Popescu: " + notaM);
+        System.out.println("Nota pentru Ioan Popa: " + notaN);
     }
 
-    public static boolean cautaInLista(List<Student> lista, Student cautat) {
-        for (Student st : lista) {
-            if (st.getPrenume().equals(cautat.getPrenume()) &&
-                    st.getNume().equals(cautat.getNume()) &&
-                    st.getFormatieDeStudiu().equals(cautat.getFormatieDeStudiu())) {
-                return true;
-            }
+    public static double gasesteNota(String prenume, String nume, Map<Integer, Student> ultimaInstantaMap) {
+        Map<String, Student> mapCautareRapida = new HashMap<>();
+
+        for (Student st : ultimaInstantaMap.values()) {
+            String cheieUnica = (st.getPrenume() + "-" + st.getNume()).toLowerCase();
+            mapCautareRapida.put(cheieUnica, st);
         }
-        return false;
+
+        String cheieCautata = (prenume + "-" + nume).toLowerCase();
+
+        if (mapCautareRapida.containsKey(cheieCautata)) {
+            return mapCautareRapida.get(cheieCautata).getNota();
+        }
+
+        return 0.0;
     }
 }
